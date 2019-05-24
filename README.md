@@ -6,6 +6,7 @@
     * [Registration](#registration)
     * [Configuration](#configuration)
     * [Running](#running)
+    * [Closing](#closing)
 
 ##  Abstract
 This application script will allow a Reddit user to create sets of subreddits they can subscribe to and provides them
@@ -60,3 +61,7 @@ Note: if you are unable to locate these items, please carefully follow the steps
 Finally, you are ready to run this Python program. To do so, open a terminal or command prompt, navigate to the folder
 which contains the "scanner_bot.py" file and run the program using `python3 scanner_bot.py`
 Note: if you have multiple python3 versions, you might need to specify the correct one using "python3.6" instead of "python3"
+
+### Closing
+If you ever decide you want to stop the bot from running on your machine for a while, simply close the bot by providing a SIGINT to it.
+To do this, press CTRL + C on the terminal you are currently running it on or run kill with SIGINT on the correct process ID that represents it.
