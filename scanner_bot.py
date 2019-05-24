@@ -1,5 +1,11 @@
 import configparser
 import praw
+import signal
+import sys
+def signal_handler(sig, frame):
+        print('Closing bot...')
+        sys.exit(0)
+
 
 def login():
     """Method used to login onto Reddit and obtain a praw.Reddit instance using the configuration within config.ini"""
@@ -33,3 +39,7 @@ def run_bot():
 
 if __name__ == '__main__':
     run_bot()
+    signal.signal(signal.SIGINT, signal_handler)
+    print('To close the bot please press Ctrl + C')
+    signal.pause() #this is currently here to show the functionality of the signal signal_handler
+    #when we actually make the bot, it will run indefintely so this pause will not be necessary
