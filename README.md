@@ -47,11 +47,13 @@ requirements.txt that was cloned from this repository is located
 Next, within the cloned repository, locate the config.ini file. Here you will specify the credentials for your
 application script to be run  
 Go back to the page from the last step, here you should find all the credentials you need to copy and paste into the
-config.ini file. For a detailed explanation on what these options mean, visit the relevant documentation 
+config.ini file after the "=" (equals) sign next to the config option's label. For a detailed explanation on what 
+these options mean, visit the relevant documentation 
 [here](https://praw.readthedocs.io/en/latest/getting_started/configuration/options.html)  
-The client_id is the string of characters located under "personal use script"  
-The client_secret is the string of characters labelled by "secret"  
-The username and password is the username and password of the Reddit account used to register this application  
+* The "client_id" is the string of characters located under "personal use script"  
+* The "client_secret" is the string of characters labelled by "secret"  
+* The "username" and "password" is the username and password of the Reddit account used to register this application  
+
 Note: if you are unable to locate these items, please carefully follow the steps listed under [Registration](#registration)
 
 ### Running
