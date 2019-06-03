@@ -59,7 +59,6 @@ def createMulti(reddit):
 
 
 def getUser():
-    feed_name = input("\nWhat is the name of the feed you want to mimic?\n")
     # utilizes a ConfigParser object to parse through the config.ini file to get the username
     config = configparser.ConfigParser()
     config.read("config.ini")
@@ -113,16 +112,35 @@ def create_feed(reddit):
 def mimic_feed(reddit):
     feed_name = input("\nWhat feed would you like to mimic?\n")
 
-    multi = reddit.multireddit(getUser, feed_name)
+    multiList = reddit.user.multireddits()
+    userName = getUser()
+    match = False
+    correctMulti = None
+    while(match == False):
+        for multi in multiList:
+            print(multi)
+            if(multi == ("/user/"+ userName +"/m/" +feed_name)):
+                match = True
+                correctMulti = multi
+        if(match == True):
+            break
+        feed_name = input("\nPlease enter a feed you own!\n")
 
-    '''
-    subreddit_list = multi.subreddits
-    for subreddit  in subreddit_list:
-        print("Successfully found '%s'" % subreddit)
-    '''
+    print("\nRemoving current subreddits...")
+    userSubreddits = reddit.user.subreddits()
+    for subreddit in userSubreddits:
+        subreddit.unsubscribe()
+        print(subreddit)
 
-    print("Functionality not yet fully implemented")
-    #check if it is a valid feed name
+
+    print("\nCopying subreddits over...")
+    subredditsToAdd = correctMulti.subreddits
+    for subreddit in subredditsToAdd:
+        subreddit.subscribe()
+        print(subreddit)
+
+
+
 
 def backup_tofeed(reddit):
 
