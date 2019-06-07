@@ -143,7 +143,6 @@ def mimic_feed(reddit):
 
 
 def backup_tofeed(reddit):
-
     multi = createMulti(reddit)
     print("Now copying subreddits over...")
 
@@ -153,6 +152,38 @@ def backup_tofeed(reddit):
         print(subreddit)
 
     print("\nSuccessfully backed up subreddits! In order to access the backup visit:\n%s%s" % (REDDIT_URL, multi.path))
+
+
+def save_hot(reddit):
+    feed_name = input("\nWhat feed would you like to save?\n")
+    multi = reddit.multireddit(getUser(), feed_name)
+    while multi is None:
+        feed_name = input("\nFeed invalid, please re-enter field\n")
+        multi = reddit.multireddit(getUser(), feed_name)
+    count = int(input("\nHow many items would you like to save? (max 100)\n"))
+    while(count > 100):
+        count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
+    list = multi.hot()
+
+    print("Saving items...")
+    try:
+        i = 0;
+        for item in list:
+            print(item.title)
+            item.save()
+            i += 1
+            if(i == count):
+                break
+    except:
+        print("\nAn error has occured, could not get items in multi requested")
+        return
+
+
+
+
+    print("Saved successfully!\n")
+
+
 
 
 def run_bot():
@@ -166,7 +197,8 @@ def run_bot():
                         "1. (c)reate\n"
                         "2. (b)ackup\n"
                         "3. (m)imic\n"
-                        "4. (q)uit\n")
+                        "4. (s)ave hot items\n"
+                        "5. (q)uit\n")
 
         # performs the action based on the command given
         if command == "c" or command == "create":
@@ -175,6 +207,8 @@ def run_bot():
             backup_tofeed(reddit)
         elif command == "m" or command == "mimic":
             mimic_feed(reddit)
+        elif command == "s" or command == "save hot items":
+            save_hot(reddit)
         elif command == "q" or command == "quit":
             sys.exit(0)
         else:
