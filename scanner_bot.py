@@ -58,7 +58,7 @@ def createMulti(reddit):
     return multi
 
 
-def getUser():
+def get_user():
     # utilizes a ConfigParser object to parse through the config.ini file to get the username
     config = configparser.ConfigParser()
     config.read("config.ini")
@@ -109,33 +109,33 @@ def create_feed(reddit):
     # finally, the link to the custom feed is output into the console so they can readily access it
     print("\nFinished adding the given subreddits to the custom feed. In order to access it, visit:\n%s%s" % (REDDIT_URL, multi.path))
 
+
 def mimic_feed(reddit):
     feed_name = input("\nWhat feed would you like to mimic?\n")
 
-    multiList = reddit.user.multireddits()
-    userName = getUser()
+    multi_list = reddit.user.multireddits()
+    user_name = get_user()
     match = False
-    correctMulti = None
-    while(match == False):
-        for multi in multiList:
+    correct_multi = None
+    while not match:
+        for multi in multi_list:
             print(multi)
-            if(multi == ("/user/"+ userName +"/m/" +feed_name)):
+            if multi == ("/user/" + user_name + "/m/" + feed_name):
                 match = True
-                correctMulti = multi
-        if(match == True):
+                correct_multi = multi
+        if match:
             break
         feed_name = input("\nPlease enter a feed you own!\n")
 
     print("\nRemoving current subreddits...")
-    userSubreddits = reddit.user.subreddits()
-    for subreddit in userSubreddits:
+    user_subreddits = reddit.user.subreddits()
+    for subreddit in user_subreddits:
         subreddit.unsubscribe()
         print(subreddit)
 
-
     print("\nCopying subreddits over...")
-    subredditsToAdd = correctMulti.subreddits
-    for subreddit in subredditsToAdd:
+    subreddits_to_add = correct_multi.subreddits
+    for subreddit in subreddits_to_add:
         subreddit.subscribe()
         print(subreddit)
 
@@ -156,10 +156,10 @@ def backup_tofeed(reddit):
 
 def save_hot(reddit):
     feed_name = input("\nWhat feed would you like to save?\n")
-    multi = reddit.multireddit(getUser(), feed_name)
+    multi = reddit.multireddit(get_user(), feed_name)
     while multi is None:
         feed_name = input("\nFeed invalid, please re-enter field\n")
-        multi = reddit.multireddit(getUser(), feed_name)
+        multi = reddit.multireddit(get_user(), feed_name)
     count = int(input("\nHow many items would you like to save? (max 100)\n"))
     while(count > 100):
         count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
@@ -167,12 +167,12 @@ def save_hot(reddit):
 
     print("Saving items...")
     try:
-        i = 0;
+        i = 0
         for item in list:
             print(item.title)
             item.save()
             i += 1
-            if(i == count):
+            if i == count:
                 break
     except:
         print("\nAn error has occured, could not get items in multi requested")
