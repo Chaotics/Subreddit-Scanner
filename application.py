@@ -1,8 +1,9 @@
+import scanner_bot
 import sys
+from PyQt5 import QtGui
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow, QWidget, QVBoxLayout, QPushButton
 import widgets
-
 
 # sub-classes the QMainWindow QtWidget class to display a window
 class AppWindow(QMainWindow):
@@ -28,6 +29,7 @@ class AppWindow(QMainWindow):
         self.widget_stack.addWidget(widgets.make_create_menu(self.back_clicked))
         self.widget_stack.addWidget(widgets.make_mimic_menu(self.back_clicked))
         self.widget_stack.addWidget(widgets.make_save_menu(self.back_clicked))
+        self.widget_stack.addWidget(widgets.make_backup_menu(self.back_clicked))
         self.setCentralWidget(central_widget)
 
     # method that adds all the buttons on the main menu
@@ -44,6 +46,8 @@ class AppWindow(QMainWindow):
             button.setFixedSize(150, min(button_height, 100))
             button.clicked.connect(button_methods[i])
             vlayout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
+            
+
 
     def back_clicked(self):
         self.widget_stack.setCurrentIndex(0)
@@ -51,14 +55,14 @@ class AppWindow(QMainWindow):
     def create_clicked(self):
         self.widget_stack.setCurrentIndex(1)
 
-    def backup_clicked(self):
-        pass
-
     def mimic_clicked(self):
         self.widget_stack.setCurrentIndex(2)
 
     def save_clicked(self):
         self.widget_stack.setCurrentIndex(3)
+    
+    def backup_clicked(self):
+        self.widget_stack.setCurrentIndex(4)
 
     def quit_clicked(self):
         sys.exit(0)
@@ -77,11 +81,23 @@ def start_app():
     window.setGeometry((screen_size.width() - window_width) / 2,
                        (screen_size.height() - window_height) / 2,
                        window_width, window_height)
+
+    app.setStyleSheet("""
+    .QWidget{
+        background-color:rgb(00, 235, 215);
+    }""");
     # shows the window on the screen
     window.show()
+
     # calls app.exec_ to start an endless event loop
     sys.exit(app.exec_())
 
+def run_gui_bot():
+    """ Method that will run the Subreddit-Scanner bot """
+    reddit = scanner_bot.login()
+    print("Logged in successfully...")
+
 
 if __name__ == '__main__':
+    run_gui_bot()
     start_app()

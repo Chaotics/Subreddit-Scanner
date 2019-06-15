@@ -51,4 +51,12 @@ def create_central_layout(back_function):
     central_layout.setSpacing(20)
     return central_layout
 
-
+def make_backup_menu(back_function):
+    backup_menu_widget = QWidget()
+    main_layout = create_central_layout(back_function)
+    form_layout = QFormLayout()
+    name_line_edit = QLineEdit()
+    form_layout.addRow("Name of subreddit to backup to: ", name_line_edit)
+    main_layout.addLayout(form_layout)
+    backup_menu_widget.setLayout(main_layout)
+    return backup_menu_widget
