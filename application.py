@@ -25,10 +25,14 @@ class AppWindow(QMainWindow):
         self.widget_stack = QStackedWidget(central_widget)
         self.widget_stack.resize(self.window_width, self.window_height)
         self.widget_stack.addWidget(menu_widget)
+        self.add_widgets()
+        self.setCentralWidget(central_widget)
+
+    def add_widgets(self):
         self.widget_stack.addWidget(widgets.make_create_menu(self.back_clicked))
+        self.widget_stack.addWidget(widgets.make_backup_menu(self.back_clicked))
         self.widget_stack.addWidget(widgets.make_mimic_menu(self.back_clicked))
         self.widget_stack.addWidget(widgets.make_save_menu(self.back_clicked))
-        self.setCentralWidget(central_widget)
 
     # method that adds all the buttons on the main menu
     def add_buttons(self, vlayout):
@@ -52,13 +56,13 @@ class AppWindow(QMainWindow):
         self.widget_stack.setCurrentIndex(1)
 
     def backup_clicked(self):
-        pass
-
-    def mimic_clicked(self):
         self.widget_stack.setCurrentIndex(2)
 
-    def save_clicked(self):
+    def mimic_clicked(self):
         self.widget_stack.setCurrentIndex(3)
+
+    def save_clicked(self):
+        self.widget_stack.setCurrentIndex(4)
 
     def quit_clicked(self):
         sys.exit(0)

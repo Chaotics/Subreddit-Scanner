@@ -134,6 +134,7 @@ def mimic_feed(reddit):
         print(subreddit)
 
     print("\nCopying subreddits over...")
+    #TODO subscribe all at once
     subreddits_to_add = correct_multi.subreddits
     for subreddit in subreddits_to_add:
         subreddit.subscribe()
