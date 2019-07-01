@@ -3,6 +3,7 @@ from PyQt5 import QtCore
 from functools import partial
 
 
+
 def make_create_menu(back_function):
     create_menu_widget = QWidget()
     main_layout = create_central_layout(back_function)
