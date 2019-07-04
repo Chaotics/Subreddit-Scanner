@@ -8,7 +8,7 @@ REDDIT_URL = "https://www.reddit.com"
 def login():
     """Method used to login onto Reddit and obtain a praw.Reddit instance using the configuration within config.ini"""
     # utilizes a ConfigParser object to parse through the config.ini file
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(interpolation=None)
     config.read("config.ini")
 
     # fetches the required config options in order to ensure that the bot can function

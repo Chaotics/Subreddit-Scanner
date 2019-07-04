@@ -58,6 +58,9 @@ class Terminal(subredditBot):
             if len(feed_name) > 50:
                 print("The maximum custom feed name length is 50 characters. The name you chose was %d characters long. Please try again" % len(feed_name))
                 continue
+            if len(feed_name) <= 1:
+                print("The minimum custom feed name length is 1 character. The name you chose was %d characters long. Please try again" % len(feed_name))
+                continue
             # and also makes sure that the custom feed created doesn't already exist for the user
             try:
                 multi = reddit.multireddit.create(display_name=feed_name, subreddits=[])
