@@ -5,10 +5,10 @@ from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication, QStackedWidget, QMainWindow, QWidget, QVBoxLayout, QPushButton
 import widgets
 
-# sub-classes the QMainWindow QtWidget class to display a window
 class AppWindow(QMainWindow):
     # uses the init method to setup the window GUI, with the passed in width and height
-    def __init__(self, width, height, *args, **kwargs):
+    def __init__(self, width, height, reddit, *args, **kwargs):
+        self.reddit = reddit
         super(AppWindow, self).__init__(*args, **kwargs)
         self.window_width = width
         self.window_height = height
@@ -28,13 +28,35 @@ class AppWindow(QMainWindow):
         self.widget_stack.addWidget(menu_widget)
         self.add_widgets()
         self.setCentralWidget(central_widget)
-
+        
+    
+    #adds all of the widgets to the app that correspond to the buttons
     def add_widgets(self):
-        self.widget_stack.addWidget(widgets.make_create_menu(self.back_clicked))
-        self.widget_stack.addWidget(widgets.make_backup_menu(self.back_clicked))
-        self.widget_stack.addWidget(widgets.make_mimic_menu(self.back_clicked))
-        self.widget_stack.addWidget(widgets.make_save_menu(self.back_clicked))
-        self.widget_stack.addWidget(widgets.make_backup_menu(self.back_clicked))
+        self.widget_stack.addWidget(widgets.make_create_menu(self.reddit, self.back_clicked))
+        self.widget_stack.addWidget(widgets.make_backup_menu(self.reddit, self.back_clicked))
+        self.widget_stack.addWidget(widgets.make_mimic_menu(self.reddit, self.back_clicked))
+        self.widget_stack.addWidget(widgets.make_save_menu(self.reddit, self.back_clicked))
+        self.widget_stack.addWidget(widgets.make_backup_menu(self.reddit, self.back_clicked))
+
+
+    def back_clicked(self):
+        self.widget_stack.setCurrentIndex(0)
+
+    def create_clicked(self):
+        self.widget_stack.setCurrentIndex(1)
+
+    def backup_clicked(self):
+        self.widget_stack.setCurrentIndex(2)
+
+    def mimic_clicked(self):
+        self.widget_stack.setCurrentIndex(3)
+
+    def save_clicked(self):
+        self.widget_stack.setCurrentIndex(4)
+
+    def quit_clicked(self):
+        sys.exit(0)
+
 
     # method that adds all the buttons on the main menu
     def add_buttons(self, vlayout):
@@ -53,57 +75,3 @@ class AppWindow(QMainWindow):
             
 
 
-    def back_clicked(self):
-        self.widget_stack.setCurrentIndex(0)
-
-    def create_clicked(self):
-        self.widget_stack.setCurrentIndex(1)
-
-
-    def backup_clicked(self):
-        self.widget_stack.setCurrentIndex(2)
-
-
-    def mimic_clicked(self):
-        self.widget_stack.setCurrentIndex(3)
-
-    def save_clicked(self):
-        self.widget_stack.setCurrentIndex(4)
-
-    def quit_clicked(self):
-        sys.exit(0)
-
-
-# method responsible for starting the application
-def start_app():
-    # creates an application instance
-    app = QApplication([])
-    window_width = 800
-    window_height = 600
-    # adds a window to the application
-    window = AppWindow(width=window_width, height=window_height)
-    # resizes the window to be in the middle of the screen and sized correctly
-    screen_size = app.desktop().screenGeometry()
-    window.setGeometry((screen_size.width() - window_width) / 2,
-                       (screen_size.height() - window_height) / 2,
-                       window_width, window_height)
-
-    app.setStyleSheet("""
-    .QWidget{
-        background-color:rgb(00, 235, 215);
-    }""");
-    # shows the window on the screen
-    window.show()
-
-    # calls app.exec_ to start an endless event loop
-    sys.exit(app.exec_())
-
-def run_gui_bot():
-    """ Method that will run the Subreddit-Scanner bot """
-    reddit = scanner_bot.login()
-    print("Logged in successfully...")
-
-
-if __name__ == '__main__':
-    run_gui_bot()
-    start_app()

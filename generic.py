@@ -91,11 +91,14 @@ def mimic_feed(reddit, subredditBot):
         subreddit.subscribe()
         subredditBot.mimicWrite(subreddit)
 
+    subredditBot.mimicWrite("\nSuccessfully mimiced subreddits of the given feed!")
+
 
 
 def save_hot(reddit, subredditBot):
-    list = subredditBot.saveRead(reddit)
-
+    commands = subredditBot.saveRead(reddit)
+    list = commands[0]
+    count = commands[1]
     subredditBot.saveWrite("Saving items...")
     try:
         i = 0
@@ -106,7 +109,7 @@ def save_hot(reddit, subredditBot):
             if i == count:
                 break
     except:
-        subredditBot.sendError("\nAn error has occured, could not get items in multi requested")
+        subredditBot.sendError("\nAn error has occured, could not get items in multi requested.")
         return
 
     subredditBot.saveWrite("Saved successfully!\n")

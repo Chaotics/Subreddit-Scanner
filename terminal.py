@@ -64,7 +64,8 @@ class Terminal(subredditBot):
         while(count > 100):
             count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
         list = multi.hot()
-        return list
+        commands = [list, count]
+        return commands
         
 
 
