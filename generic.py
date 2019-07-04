@@ -49,7 +49,7 @@ def create_feed(reddit, subredditBot):
     multi = itemsRead[1]
     # next, the user is prompted for all the subreddits they want to add to the feed
     
-    print("\nAdding the chosen subreddits to the custom feed\n")
+    subredditBot.createWrite("\nAdding the chosen subreddits to the custom feed\n")
     for subreddit in subreddit_list:
         # once the list of subreddits is fetched from the user, each of them is added to feed one by one
         try:
@@ -59,7 +59,7 @@ def create_feed(reddit, subredditBot):
         except BadRequest:
             # if adding the subreddit fails due to a BadRequest, it means that the subreddit provided wasn't valid
             # so the appropriate error message is printed
-            subredditBot.createWrite("Failed to add the subreddit '%s' to the feed because it is not a valid subreddit" % subreddit)
+            subredditBot.sendError("Failed to add the subreddit '%s' to the feed because it is not a valid subreddit" % subreddit)
 
     # finally, the link to the custom feed is output into the console so they can readily access it
     subredditBot.createWrite("\nFinished adding the given subreddits to the custom feed. In order to access it, visit:\n%s%s" % (REDDIT_URL, multi.path))
@@ -67,44 +67,36 @@ def create_feed(reddit, subredditBot):
 
 def backup_tofeed(reddit, subredditBot):
     multi = subredditBot.backupRead(reddit)
-    # print("Now copying subreddits over...")
+    subredditBot.backupWrite("Now copying subreddits over...")
 
-    # userSubreddits = reddit.user.subreddits()
-    # for subreddit in userSubreddits:
-    #     multi.add(subreddit)
-    #     subredditBot.backupWrite(subreddit)
+    userSubreddits = reddit.user.subreddits()
+    for subreddit in userSubreddits:
+        multi.add(subreddit)
+        subredditBot.backupWrite(subreddit)
 
-    # subredditBot.backupWrite("\nSuccessfully backed up subreddits! In order to access the backup visit:\n%s%s" % (REDDIT_URL, multi.path))
+    subredditBot.backupWrite("\nSuccessfully backed up subreddits! In order to access the backup visit:\n%s%s" % (REDDIT_URL, multi.path))
 
 def mimic_feed(reddit, subredditBot):
     correct_multi = subredditBot.mimicRead(reddit)
-    print("\nRemoving current subreddits...")
+    subredditBot.mimicWrite("\nRemoving current subreddits...")
     user_subreddits = reddit.user.subreddits()
     for subreddit in user_subreddits:
         subreddit.unsubscribe()
-        print(subreddit)
+        subredditBot.mimicWrite(subreddit)
 
-    print("\nCopying subreddits over...")
+    subredditBot.mimicWrite("\nCopying subreddits over...")
     #TODO subscribe all at once
     subreddits_to_add = correct_multi.subreddits
     for subreddit in subreddits_to_add:
         subreddit.subscribe()
-        print(subreddit)
+        subredditBot.mimicWrite(subreddit)
 
 
 
 def save_hot(reddit, subredditBot):
-    feed_name = input("\nWhat feed would you like to save?\n")
-    multi = reddit.multireddit(get_user(), feed_name)
-    while multi is None:
-        feed_name = input("\nFeed invalid, please re-enter field\n")
-        multi = reddit.multireddit(get_user(), feed_name)
-    count = int(input("\nHow many items would you like to save? (max 100)\n"))
-    while(count > 100):
-        count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
-    list = multi.hot()
+    list = subredditBot.saveRead(reddit)
 
-    print("Saving items...")
+    subredditBot.saveWrite("Saving items...")
     try:
         i = 0
         for item in list:
@@ -114,7 +106,7 @@ def save_hot(reddit, subredditBot):
             if i == count:
                 break
     except:
-        print("\nAn error has occured, could not get items in multi requested")
+        subredditBot.sendError("\nAn error has occured, could not get items in multi requested")
         return
 
-    print("Saved successfully!\n")
+    subredditBot.saveWrite("Saved successfully!\n")

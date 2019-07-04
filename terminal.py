@@ -1,8 +1,14 @@
 from subreddit_bot import subredditBot 
 from prawcore.exceptions import Conflict, BadRequest
 from generic import get_user
+from sys import stderr
 
 class Terminal(subredditBot):
+    
+    def sendError(self, error):
+        stderr.write(error)
+
+
     def createWrite(self, toWrite):
         print(toWrite)
 
@@ -44,6 +50,22 @@ class Terminal(subredditBot):
             feed_name = input("\nPlease enter a feed you own!\n")
         
         return correct_multi
+
+
+    def saveWrite(self, toWrite):
+        pass
+    def saveRead(self, reddit):
+        feed_name = input("\nWhat feed would you like to save?\n")
+        multi = reddit.multireddit(get_user(), feed_name)
+        while multi is None:
+            feed_name = input("\nFeed invalid, please re-enter field\n")
+            multi = reddit.multireddit(get_user(), feed_name)
+        count = int(input("\nHow many items would you like to save? (max 100)\n"))
+        while(count > 100):
+            count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
+        list = multi.hot()
+        return list
+        
 
 
 
