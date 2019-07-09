@@ -1,38 +1,35 @@
-from subreddit_bot import subredditBot 
-from prawcore.exceptions import Conflict, BadRequest
-from generic import get_user
 from sys import stderr
 
-class Terminal(subredditBot):
-    
-    def sendError(self, error):
+from prawcore.exceptions import Conflict
+
+from generic import get_user
+from subreddit_bot import SubredditBot
+
+
+class Terminal(SubredditBot):
+
+    def send_error(self, error):
         stderr.write(error)
 
+    def create_write(self, to_write):
+        print(to_write)
 
-    def createWrite(self, toWrite):
-        print(toWrite)
-
-    def createRead(self, reddit):
-        multi = self.createMulti(reddit)
+    def create_read(self, reddit):
+        multi = self.create_multi(reddit)
         subreddit_list = self.read_subreddits()
-        itemsRead = [subreddit_list, multi]
-        return itemsRead
-    
+        items_read = [subreddit_list, multi]
+        return items_read
 
+    def backup_write(self, to_write):
+        print(to_write)
 
+    def backup_read(self, reddit):
+        return self.create_multi(reddit)
 
+    def mimic_write(self, to_write):
+        print(to_write)
 
-    def backupWrite(self, toWrite):
-        print(toWrite)
-    def backupRead(self, reddit):
-        return self.createMulti(reddit)
-   
-
-
-    def mimicWrite(self, toWrite):
-        print(toWrite)
-
-    def mimicRead(self, reddit):
+    def mimic_read(self, reddit):
         feed_name = input("\nWhat feed would you like to mimic?\n")
 
         multi_list = reddit.user.multireddits()
@@ -48,30 +45,26 @@ class Terminal(subredditBot):
             if match:
                 break
             feed_name = input("\nPlease enter a feed you own!\n")
-        
+
         return correct_multi
 
-
-    def saveWrite(self, toWrite):
+    def save_write(self, to_write):
         pass
-    def saveRead(self, reddit):
+
+    def save_read(self, reddit):
         feed_name = input("\nWhat feed would you like to save?\n")
         multi = reddit.multireddit(get_user(), feed_name)
         while multi is None:
             feed_name = input("\nFeed invalid, please re-enter field\n")
             multi = reddit.multireddit(get_user(), feed_name)
         count = int(input("\nHow many items would you like to save? (max 100)\n"))
-        while(count > 100):
+        while count > 100:
             count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
-        list = multi.hot()
-        commands = [list, count]
+        hot_list = multi.hot()
+        commands = [hot_list, count]
         return commands
-        
 
-
-
-
-    def createMulti(self, reddit):
+    def create_multi(self, reddit):
         multi = None
         feed_name = None
 
@@ -79,10 +72,14 @@ class Terminal(subredditBot):
             feed_name = input("\nWhat would you like to name this new feed? (limit 50 characters)\n")
             # the name is not allowed to be longer than 50 characters (per Reddit custom feed name specifications)
             if len(feed_name) > 50:
-                print("The maximum custom feed name length is 50 characters. The name you chose was %d characters long. Please try again" % len(feed_name))
+                print(
+                    "The maximum custom feed name length is 50 characters. The name you chose was %d characters long. "
+                    "Please try again" % len(feed_name))
                 continue
             if len(feed_name) <= 1:
-                print("The minimum custom feed name length is 1 character. The name you chose was %d characters long. Please try again" % len(feed_name))
+                print(
+                    "The minimum custom feed name length is 1 character. The name you chose was %d characters long. "
+                    "Please try again" % len(feed_name))
                 continue
             # and also makes sure that the custom feed created doesn't already exist for the user
             try:
@@ -93,15 +90,15 @@ class Terminal(subredditBot):
                 continue
         print("Successfully created an empty custom feed named %s\n" % feed_name)
         return multi
-    
-    
+
     def read_subreddits(self):
         """Method that reads in a list of subreddits from the user to be added to a custom feed"""
         # starts by asking the user for the number of subreddits they want to add
         subreddit_count = None
         while subreddit_count is None:
             try:
-                subreddit_count = int(input("Please enter the number of subreddit(s) you want to add to your collection!\n"))
+                subreddit_count = int(
+                    input("Please enter the number of subreddit(s) you want to add to your collection!\n"))
                 break
             # if the user input is not a valid number, then it keeps re-prompting the user
             except ValueError:

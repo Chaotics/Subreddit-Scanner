@@ -1,6 +1,7 @@
-import praw
 import configparser
-from prawcore.exceptions import Conflict, BadRequest
+
+import praw
+from prawcore.exceptions import BadRequest
 
 REDDIT_URL = "https://www.reddit.com"
 
@@ -38,78 +39,80 @@ def get_user():
     return config["DEFAULT"]["username"]
 
 
-
-
-def create_feed(reddit, subredditBot):
+def create_feed(reddit, subreddit_bot):
     """Method that creates a custom feed that the user requests"""
     # starts by prompting the user for a name for the custom feed
-    itemsRead = subredditBot.createRead(reddit)
+    items_read = subreddit_bot.create_read(reddit)
 
-    subreddit_list = itemsRead[0]
-    multi = itemsRead[1]
+    subreddit_list = items_read[0]
+    multi = items_read[1]
     # next, the user is prompted for all the subreddits they want to add to the feed
-    
-    subredditBot.createWrite("\nAdding the chosen subreddits to the custom feed\n")
+
+    subreddit_bot.create_write("\nAdding the chosen subreddits to the custom feed\n")
     for subreddit in subreddit_list:
         # once the list of subreddits is fetched from the user, each of them is added to feed one by one
         try:
             multi.add(subreddit)
-            subredditBot.createWrite("Successfully added the subreddit '%s' to the feed" % subreddit)
-            
+            subreddit_bot.create_write("Successfully added the subreddit '%s' to the feed" % subreddit)
+
         except BadRequest:
             # if adding the subreddit fails due to a BadRequest, it means that the subreddit provided wasn't valid
             # so the appropriate error message is printed
-            subredditBot.sendError("Failed to add the subreddit '%s' to the feed because it is not a valid subreddit" % subreddit)
+            subreddit_bot.send_error(
+                "Failed to add the subreddit '%s' to the feed because it is not a valid subreddit" % subreddit)
 
     # finally, the link to the custom feed is output into the console so they can readily access it
-    subredditBot.createWrite("\nFinished adding the given subreddits to the custom feed. In order to access it, visit:\n%s%s" % (REDDIT_URL, multi.path))
+    subreddit_bot.create_write(
+        "\nFinished adding the given subreddits to the custom feed. In order to access it, visit:\n%s%s" % (
+            REDDIT_URL, multi.path))
 
 
-def backup_tofeed(reddit, subredditBot):
-    multi = subredditBot.backupRead(reddit)
-    subredditBot.backupWrite("Now copying subreddits over...")
+def backup_tofeed(reddit, subreddit_bot):
+    multi = subreddit_bot.backup_read(reddit)
+    subreddit_bot.backup_write("Now copying subreddits over...")
 
-    userSubreddits = reddit.user.subreddits()
-    for subreddit in userSubreddits:
+    user_subreddits = reddit.user.subreddits()
+    for subreddit in user_subreddits:
         multi.add(subreddit)
-        subredditBot.backupWrite(subreddit)
+        subreddit_bot.backup_write(subreddit)
 
-    subredditBot.backupWrite("\nSuccessfully backed up subreddits! In order to access the backup visit:\n%s%s" % (REDDIT_URL, multi.path))
+    subreddit_bot.backup_write(
+        "\nSuccessfully backed up subreddits! In order to access the backup visit:\n%s%s" % (REDDIT_URL, multi.path))
 
-def mimic_feed(reddit, subredditBot):
-    correct_multi = subredditBot.mimicRead(reddit)
-    subredditBot.mimicWrite("\nRemoving current subreddits...")
+
+def mimic_feed(reddit, subreddit_bot):
+    correct_multi = subreddit_bot.mimic_read(reddit)
+    subreddit_bot.mimic_write("\nRemoving current subreddits...")
     user_subreddits = reddit.user.subreddits()
     for subreddit in user_subreddits:
         subreddit.unsubscribe()
-        subredditBot.mimicWrite(subreddit)
+        subreddit_bot.mimic_write(subreddit)
 
-    subredditBot.mimicWrite("\nCopying subreddits over...")
-    #TODO subscribe all at once
+    subreddit_bot.mimic_write("\nCopying subreddits over...")
+    # TODO subscribe all at once
     subreddits_to_add = correct_multi.subreddits
     for subreddit in subreddits_to_add:
         subreddit.subscribe()
-        subredditBot.mimicWrite(subreddit)
+        subreddit_bot.mimic_write(subreddit)
 
-    subredditBot.mimicWrite("\nSuccessfully mimiced subreddits of the given feed!")
+    subreddit_bot.mimic_write("\nSuccessfully mimiced subreddits of the given feed!")
 
 
-
-def save_hot(reddit, subredditBot):
-    commands = subredditBot.saveRead(reddit)
-    list = commands[0]
+def save_hot(reddit, subreddit_bot):
+    commands = subreddit_bot.save_read(reddit)
+    hot_list = commands[0]
     count = commands[1]
-    subredditBot.saveWrite("Saving items...")
+    subreddit_bot.save_write("Saving items...")
     try:
         i = 0
-        for item in list:
+        for item in hot_list:
             print(item.title)
             item.save()
             i += 1
             if i == count:
                 break
     except:
-        subredditBot.sendError("\nAn error has occured, could not get items in multi requested.")
+        subreddit_bot.send_error("\nAn error has occured, could not get items in multi requested.")
         return
 
-    subredditBot.saveWrite("Saved successfully!\n")
+    subreddit_bot.save_write("Saved successfully!\n")

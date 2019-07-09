@@ -1,24 +1,27 @@
-class subredditBot():
-    def sendError(self, error):
-        raise NotImplementedError()
-    
-    def createWrite(self, toWrite):
-        raise NotImplementedError()
-    def createRead(self, reddit):
+class SubredditBot:
+    def send_error(self, error):
         raise NotImplementedError()
 
-    def backupWrite(self, toWrite):
-        raise NotImplementedError()
-    def backupRead(self, reddit):
+    def create_write(self, to_write):
         raise NotImplementedError()
 
-    def mimicWrite(self, toWrite):
-        raise NotImplementedError()
-    def mimicRead(self, reddit):
+    def create_read(self, reddit):
         raise NotImplementedError()
 
-    def saveWrite(self, toWrite):
+    def backup_write(self, to_write):
         raise NotImplementedError()
-    def saveRead(self, reddit):
+
+    def backup_read(self, reddit):
         raise NotImplementedError()
-    
+
+    def mimic_write(self, to_write):
+        raise NotImplementedError()
+
+    def mimic_read(self, reddit):
+        raise NotImplementedError()
+
+    def save_write(self, to_write):
+        raise NotImplementedError()
+
+    def save_read(self, reddit):
+        raise NotImplementedError()

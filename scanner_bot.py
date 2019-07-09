@@ -1,13 +1,11 @@
-import configparser
-import praw
-from prawcore.exceptions import Conflict, BadRequest
 import signal
 import sys
-from pprint import pprint
+
+from generic import login, create_feed, backup_tofeed, mimic_feed, save_hot
 from terminal import Terminal
-from generic import login, get_user, create_feed, backup_tofeed, mimic_feed, save_hot
 
 REDDIT_URL = "https://www.reddit.com"
+
 
 # a signal handler to handle shutdown of the bot
 def signal_handler(sig, frame):
@@ -15,12 +13,11 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 
-
 def run_bot():
     """ Method that will run the Subreddit-Scanner bot """
     reddit = login()
     print("Logged in successfully...")
-    terminalObj = Terminal()
+    terminal_obj = Terminal()
     # runs the program indefinitely
     while True:
         # fetches the command
@@ -33,13 +30,13 @@ def run_bot():
 
         # performs the action based on the command given
         if command == "c" or command == "create":
-            create_feed(reddit, terminalObj)
+            create_feed(reddit, terminal_obj)
         elif command == 'b' or command == "backup":
-            backup_tofeed(reddit, terminalObj)
+            backup_tofeed(reddit, terminal_obj)
         elif command == "m" or command == "mimic":
-            mimic_feed(reddit, terminalObj)
+            mimic_feed(reddit, terminal_obj)
         elif command == "s" or command == "save hot items":
-            save_hot(reddit, terminalObj)
+            save_hot(reddit, terminal_obj)
         elif command == "q" or command == "quit":
             sys.exit(0)
         else:
@@ -51,4 +48,3 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
     print('To close the bot please press Ctrl + C')
     run_bot()
-
