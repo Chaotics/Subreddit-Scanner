@@ -2,17 +2,23 @@ from sys import stderr
 
 from prawcore.exceptions import Conflict
 
-from generic import get_user
-from subreddit_bot import SubredditBot
+from connectors.generic import get_user
+from connectors.subreddit_bot import SubredditBot
 
 
 class Terminal(SubredditBot):
 
+    def reset_write(self):
+        pass
+
     def send_error(self, error):
         stderr.write(error)
 
-    def create_write(self, to_write):
+    def write_to_screen(self, to_write):
         print(to_write)
+
+    def create_write(self, to_write):
+        self.write_to_screen(to_write)
 
     def create_read(self, reddit):
         multi = self.create_multi(reddit)
@@ -21,13 +27,13 @@ class Terminal(SubredditBot):
         return items_read
 
     def backup_write(self, to_write):
-        print(to_write)
+        self.write_to_screen(to_write)
 
     def backup_read(self, reddit):
         return self.create_multi(reddit)
 
     def mimic_write(self, to_write):
-        print(to_write)
+        self.write_to_screen(to_write)
 
     def mimic_read(self, reddit):
         feed_name = input("\nWhat feed would you like to mimic?\n")
@@ -49,7 +55,7 @@ class Terminal(SubredditBot):
         return correct_multi
 
     def save_write(self, to_write):
-        pass
+        self.write_to_screen(to_write)
 
     def save_read(self, reddit):
         feed_name = input("\nWhat feed would you like to save?\n")

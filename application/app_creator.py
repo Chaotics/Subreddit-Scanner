@@ -3,7 +3,7 @@ import sys
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QStackedWidget, QMainWindow, QWidget, QVBoxLayout, QPushButton
 
-import widgets
+from application import widgets
 
 
 class AppWindow(QMainWindow):

@@ -1,8 +1,8 @@
 import signal
 import sys
 
-from generic import login, create_feed, backup_tofeed, mimic_feed, save_hot
-from terminal import Terminal
+from connectors.generic import login, create_feed, backup_tofeed, mimic_feed, save_hot
+from connectors.terminal import Terminal
 
 REDDIT_URL = "https://www.reddit.com"
 

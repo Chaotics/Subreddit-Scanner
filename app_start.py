@@ -2,15 +2,15 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-import scanner_bot
-from application import AppWindow
+from connectors import generic
+from application.app_creator import AppWindow
 
 
 # sub-classes the QMainWindow QtWidget class to display a window
 
 # method responsible for starting the application
 def start_app():
-    reddit_instance = scanner_bot.login()
+    reddit_instance = generic.login()
     print("Logged in successfully...")
     # creates an application instance
     app = QApplication([])
