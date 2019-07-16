@@ -8,6 +8,7 @@ from connectors.generic import create_feed, backup_tofeed, mimic_feed, save_hot
 from connectors.gui import GuiInterface
 
 
+# method responsible for creating the create sub-menu
 def make_create_menu(reddit, back_function):
     create_menu_widget = QWidget()
     main_layout, display_text_edit = create_central_layout(back_function)
@@ -28,6 +29,7 @@ def make_create_menu(reddit, back_function):
     return create_menu_widget
 
 
+# method responsible for creating the backup sub-menu
 def make_backup_menu(reddit, back_function):
     backup_menu_widget = QWidget()
     main_layout, display_text_edit = create_central_layout(back_function)
@@ -43,6 +45,7 @@ def make_backup_menu(reddit, back_function):
     return backup_menu_widget
 
 
+# method responsible for creating the mimic sub-menu
 def make_mimic_menu(reddit, back_function):
     mimic_menu_widget = QWidget()
     main_layout, display_text_edit = create_central_layout(back_function)
@@ -58,6 +61,7 @@ def make_mimic_menu(reddit, back_function):
     return mimic_menu_widget
 
 
+# method responsible for creating the save sub-menu
 def make_save_menu(reddit, back_function):
     save_menu_widget = QWidget()
     main_layout, display_text_edit = create_central_layout(back_function)
@@ -77,6 +81,7 @@ def make_save_menu(reddit, back_function):
     return save_menu_widget
 
 
+# method responsible for creating the generic layout for each sub-menu
 def create_central_layout(parent_back_function):
     central_layout = QVBoxLayout()
     back_button = QPushButton("<--- Back to Main Menu")
@@ -95,9 +100,10 @@ def handle_back_pressed(parent_back_function, display_text_edit: QTextEdit):
     display_text_edit.clear()
 
 
-# All of the following submit functions must be changed in order to error check BEFORE we send it to the gui class
+# TODO All of the following submit functions must be changed in order to error check BEFORE we send it to the gui class
 # examples of the old error check methods have been put inside the gui class for reference and commented out
 
+# method that gets executed when the submit button for create is pressed
 def create_submitted(reddit: Reddit, name_line_edit: QLineEdit, subreddits_text_edit: QTextEdit,
                      display_text_edit: QTextEdit):
     multi_name = name_line_edit.text()
@@ -110,6 +116,7 @@ def create_submitted(reddit: Reddit, name_line_edit: QLineEdit, subreddits_text_
     subreddits_text_edit.clear()
 
 
+# method that gets executed when the submit button for backup is pressed
 def backup_submitted(reddit: Reddit, name_line_edit: QLineEdit, display_text_edit: QTextEdit):
     gui_connect = GuiInterface(display_text_edit)
     gui_connect.multi_name = name_line_edit.text()
@@ -117,6 +124,7 @@ def backup_submitted(reddit: Reddit, name_line_edit: QLineEdit, display_text_edi
     name_line_edit.clear()
 
 
+# method that gets executed when the submit button for mimic is pressed
 def mimic_submitted(reddit: Reddit, name_line_edit: QLineEdit, display_text_edit: QTextEdit):
     gui_connect = GuiInterface(display_text_edit)
     gui_connect.multi_name = name_line_edit.text()
@@ -125,6 +133,7 @@ def mimic_submitted(reddit: Reddit, name_line_edit: QLineEdit, display_text_edit
     name_line_edit.clear()
 
 
+# method that gets executed when the submit button for save is pressed
 def save_submitted(reddit: Reddit, name_line_edit: QLineEdit, quantity_spin_box: QSpinBox,
                    display_text_edit: QTextEdit):
     num_to_save = quantity_spin_box.text()

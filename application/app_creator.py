@@ -38,21 +38,27 @@ class AppWindow(QMainWindow):
         self.widget_stack.addWidget(widgets.make_save_menu(self.reddit, self.back_clicked))
         self.widget_stack.addWidget(widgets.make_backup_menu(self.reddit, self.back_clicked))
 
+    # method that switches the top widget to the main menu
     def back_clicked(self):
         self.widget_stack.setCurrentIndex(0)
 
+    # method that switches the top widget to that of create
     def create_clicked(self):
         self.widget_stack.setCurrentIndex(1)
 
+    # method that switches the top widget to that of backup
     def backup_clicked(self):
         self.widget_stack.setCurrentIndex(2)
 
+    # method that switches the top widget to that of mimic
     def mimic_clicked(self):
         self.widget_stack.setCurrentIndex(3)
 
+    # method that switches the top widget to that of save
     def save_clicked(self):
         self.widget_stack.setCurrentIndex(4)
 
+    # method that exits the application when clicked
     def quit_clicked(self):
         sys.exit(0)
 
