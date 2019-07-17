@@ -41,6 +41,3 @@ class SubredditBot:
     def save_read(self, reddit):
         raise NotImplementedError()
 
-    # method used to reset the relevant data fields after the relevant user input is taken in
-    def reset_write(self):
-        raise NotImplementedError()

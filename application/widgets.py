@@ -114,7 +114,7 @@ def create_submitted(reddit: Reddit, name_line_edit: QLineEdit, subreddits_text_
     create_feed(reddit, gui_connect)
     name_line_edit.clear()
     subreddits_text_edit.clear()
-
+    gui_connect.write_to_screen("\n\n")
 
 # method that gets executed when the submit button for backup is pressed
 def backup_submitted(reddit: Reddit, name_line_edit: QLineEdit, display_text_edit: QTextEdit):
@@ -122,15 +122,15 @@ def backup_submitted(reddit: Reddit, name_line_edit: QLineEdit, display_text_edi
     gui_connect.multi_name = name_line_edit.text()
     backup_tofeed(reddit, gui_connect)
     name_line_edit.clear()
-
+    gui_connect.write_to_screen("\n\n")
 
 # method that gets executed when the submit button for mimic is pressed
 def mimic_submitted(reddit: Reddit, name_line_edit: QLineEdit, display_text_edit: QTextEdit):
     gui_connect = GuiInterface(display_text_edit)
     gui_connect.multi_name = name_line_edit.text()
     mimic_feed(reddit, gui_connect)
-
     name_line_edit.clear()
+    gui_connect.write_to_screen("\n\n")
 
 
 # method that gets executed when the submit button for save is pressed
@@ -143,3 +143,4 @@ def save_submitted(reddit: Reddit, name_line_edit: QLineEdit, quantity_spin_box:
     save_hot(reddit, gui_connect)
     name_line_edit.clear()
     quantity_spin_box.setValue(quantity_spin_box.minimum())
+    gui_connect.write_to_screen("\n\n")
