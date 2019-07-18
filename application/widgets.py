@@ -1,4 +1,5 @@
 from functools import partial
+from typing import Tuple
 
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget, QSpinBox, QLineEdit, QTextEdit, QVBoxLayout, QFormLayout, QPushButton, QSizePolicy
@@ -11,7 +12,6 @@ from connectors.gui import GuiInterface
 # method responsible for creating the create sub-menu
 def make_create_menu(reddit, back_function):
     create_menu_widget = QWidget()
-    main_layout, display_text_edit = create_central_layout(back_function)
     form_layout = QFormLayout()
     name_line_edit = QLineEdit()
     subreddits_text_edit = QTextEdit()
@@ -21,6 +21,7 @@ def make_create_menu(reddit, back_function):
 
     form_layout.addRow("Name (50 character limit): ", name_line_edit)
     form_layout.addRow("Subreddits (comma separated): ", subreddits_text_edit)
+    main_layout, display_text_edit = create_central_layout(back_function, (name_line_edit, subreddits_text_edit))
     main_layout.insertLayout(1, form_layout)
     main_layout.addWidget(submit_button)
     submit_button.clicked.connect(
@@ -32,12 +33,12 @@ def make_create_menu(reddit, back_function):
 # method responsible for creating the backup sub-menu
 def make_backup_menu(reddit, back_function):
     backup_menu_widget = QWidget()
-    main_layout, display_text_edit = create_central_layout(back_function)
     form_layout = QFormLayout()
     name_line_edit = QLineEdit()
     submit_button = QPushButton("Submit")
 
     form_layout.addRow("Name of multifeed to backup to: ", name_line_edit)
+    main_layout, display_text_edit = create_central_layout(back_function, (name_line_edit,))
     main_layout.insertLayout(1, form_layout)
     main_layout.addWidget(submit_button)
     submit_button.clicked.connect(partial(backup_submitted, reddit, name_line_edit, display_text_edit))
@@ -48,15 +49,15 @@ def make_backup_menu(reddit, back_function):
 # method responsible for creating the mimic sub-menu
 def make_mimic_menu(reddit, back_function):
     mimic_menu_widget = QWidget()
-    main_layout, display_text_edit = create_central_layout(back_function)
     form_layout = QFormLayout()
     name_line_edit = QLineEdit()
     submit_button = QPushButton("Submit")
 
     form_layout.addRow("Name of multifeed to mimic: ", name_line_edit)
-    submit_button.clicked.connect(partial(mimic_submitted, reddit, name_line_edit, display_text_edit))
+    main_layout, display_text_edit = create_central_layout(back_function, (name_line_edit,))
     main_layout.insertLayout(1, form_layout)
     main_layout.addWidget(submit_button)
+    submit_button.clicked.connect(partial(mimic_submitted, reddit, name_line_edit, display_text_edit))
     mimic_menu_widget.setLayout(main_layout)
     return mimic_menu_widget
 
@@ -64,7 +65,6 @@ def make_mimic_menu(reddit, back_function):
 # method responsible for creating the save sub-menu
 def make_save_menu(reddit, back_function):
     save_menu_widget = QWidget()
-    main_layout, display_text_edit = create_central_layout(back_function)
     form_layout = QFormLayout()
     name_line_edit = QLineEdit()
     quantity_spin_box = QSpinBox()
@@ -74,30 +74,31 @@ def make_save_menu(reddit, back_function):
 
     form_layout.addRow("Name of multifeed: ", name_line_edit)
     form_layout.addRow("Number of items to save: ", quantity_spin_box)
-    submit_button.clicked.connect(partial(save_submitted, reddit, name_line_edit, quantity_spin_box, display_text_edit))
+    main_layout, display_text_edit = create_central_layout(back_function, (name_line_edit, quantity_spin_box))
     main_layout.insertLayout(1, form_layout)
     main_layout.addWidget(submit_button)
+    submit_button.clicked.connect(partial(save_submitted, reddit, name_line_edit, quantity_spin_box, display_text_edit))
     save_menu_widget.setLayout(main_layout)
     return save_menu_widget
 
 
 # method responsible for creating the generic layout for each sub-menu
-def create_central_layout(parent_back_function):
+def create_central_layout(parent_back_function, input_fields: Tuple):
     central_layout = QVBoxLayout()
     back_button = QPushButton("<--- Back to Main Menu")
     display_text_edit = QTextEdit()
     display_text_edit.setReadOnly(True)
-    back_button.pressed.connect(partial(handle_back_pressed, parent_back_function, display_text_edit))
+    back_button.pressed.connect(partial(handle_back_pressed, parent_back_function, input_fields + (display_text_edit,)))
     central_layout.setSpacing(20)
     central_layout.addWidget(back_button, alignment=QtCore.Qt.AlignLeft)
     central_layout.addWidget(display_text_edit)
     return central_layout, display_text_edit
 
 
-# TODO handle resetting other input fields
-def handle_back_pressed(parent_back_function, display_text_edit: QTextEdit):
+def handle_back_pressed(parent_back_function, reset_fields: Tuple):
     parent_back_function()
-    display_text_edit.clear()
+    for field in reset_fields:
+        field.clear()
 
 
 # TODO All of the following submit functions must be changed in order to error check BEFORE we send it to the gui class
