@@ -42,8 +42,6 @@ def get_user():
 
 def create_feed(reddit, subreddit_bot):
     """Method that creates a custom feed that the user requests"""
-    # starts by prompting the user for a name for the custom feed
-    subreddit_bot.reset_write()
     items_read = subreddit_bot.create_read(reddit)
     if items_read is None:
         return
@@ -62,7 +60,7 @@ def create_feed(reddit, subreddit_bot):
             # if adding the subreddit fails due to a BadRequest, it means that the subreddit provided wasn't valid
             # so the appropriate error message is printed
             subreddit_bot.send_error(
-                "Failed to add the subreddit '%s' to the feed because it is not a valid subreddit" % subreddit)
+                "Failed to add the subreddit '%s' to the feed because it is not a valid subreddit." % subreddit)
     # finally, the link to the custom feed is output into the console so they can readily access it
     subreddit_bot.create_write(
         "\nFinished adding the given subreddits to the custom feed. In order to access it, visit:\n%s%s" % (
@@ -70,22 +68,24 @@ def create_feed(reddit, subreddit_bot):
 
 
 def backup_tofeed(reddit, subreddit_bot):
-    subreddit_bot.reset_write()
     multi = subreddit_bot.backup_read(reddit)
+    if multi is None:
+        return
+    
     subreddit_bot.backup_write("Now copying subreddits over...\n")
 
     user_subreddits = reddit.user.subreddits()
     for subreddit in user_subreddits:
         multi.add(subreddit)
         subreddit_bot.backup_write("Copied %s" % str(subreddit))
-
-    subreddit_bot.backup_write(
-        "\nSuccessfully backed up subreddits! In order to access the backup visit:\n%s%s" % (REDDIT_URL, multi.path))
+    
+    subreddit_bot.backup_write("\nSuccessfully backed up subreddits! In order to access the backup visit:\n%s%s" % (REDDIT_URL, multi.path))
 
 
 def mimic_feed(reddit, subreddit_bot):
-    subreddit_bot.reset_write()
     correct_multi = subreddit_bot.mimic_read(reddit)
+    if correct_multi is None:
+        return
     subreddit_bot.mimic_write("Removing current subreddits...\n")
     user_subreddits = reddit.user.subreddits()
     for subreddit in user_subreddits:
@@ -103,7 +103,6 @@ def mimic_feed(reddit, subreddit_bot):
 
 
 def save_hot(reddit, subreddit_bot):
-    subreddit_bot.reset_write()
     commands = subreddit_bot.save_read(reddit)
     hot_list = commands[0]
     count = commands[1]

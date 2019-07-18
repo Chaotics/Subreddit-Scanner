@@ -8,8 +8,7 @@ from connectors.subreddit_bot import SubredditBot
 
 class Terminal(SubredditBot):
 
-    def reset_write(self):
-        pass
+
 
     def send_error(self, error):
         stderr.write(error)

@@ -15,9 +15,6 @@ class GuiInterface(SubredditBot):
         self.number_of_items = 0
         self.write_item = write_item
 
-    def reset_write(self):
-        # resets the write_item text by clearing it
-        self.write_item.clear()
 
     def send_error(self, error):
         # creates an error dialog to display any error messages to the screen
@@ -78,10 +75,8 @@ class GuiInterface(SubredditBot):
                     correct_multi = multi
             if match:
                 break
-            # The following must be sent to the screen somehow! we should re-take the input and somehow stop the
-            # current process
-            feed_name = input("\nPlease enter a feed you own!\n")
-            break
+            self.send_error("Please enter a feed you own!")
+            return None
 
         return correct_multi
 
@@ -113,7 +108,7 @@ class GuiInterface(SubredditBot):
                 break
             except Conflict:
                 self.send_error("There was an error creating the multi-reddit due to a conflict. Possibly because a "
-                                "multi-reddit with that name already exists")
+                                "multi-reddit with that name already exists.")
                 return multi
         self.write_to_screen("Created Multi-Reddit named: %s\n" % str(feed_name))
         return multi
