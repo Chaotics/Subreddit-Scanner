@@ -104,6 +104,8 @@ def mimic_feed(reddit, subreddit_bot):
 
 def save_hot(reddit, subreddit_bot):
     commands = subreddit_bot.save_read(reddit)
+    if commands is None:
+        return
     hot_list = commands[0]
     count = commands[1]
     subreddit_bot.save_write("Saving items...\n")
@@ -119,4 +121,4 @@ def save_hot(reddit, subreddit_bot):
         subreddit_bot.send_error("\nAn error has occurred, could not get items in multi requested.")
         return
 
-    subreddit_bot.save_write("\nSuccessfully saved %d of the hottest topics\n" % count)
+    subreddit_bot.save_write("\nSuccessfully saved %d of the hottest topics\n." % count)

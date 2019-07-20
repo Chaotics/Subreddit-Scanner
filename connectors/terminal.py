@@ -1,6 +1,6 @@
 from sys import stderr
 
-from prawcore.exceptions import Conflict
+from prawcore.exceptions import Conflict, BadRequest
 
 from connectors.generic import get_user
 from connectors.subreddit_bot import SubredditBot
@@ -59,12 +59,22 @@ class Terminal(SubredditBot):
     def save_read(self, reddit):
         feed_name = input("\nWhat feed would you like to save?\n")
         multi = reddit.multireddit(get_user(), feed_name)
+
         while multi is None:
             feed_name = input("\nFeed invalid, please re-enter field\n")
             multi = reddit.multireddit(get_user(), feed_name)
+    
         count = int(input("\nHow many items would you like to save? (max 100)\n"))
         while count > 100:
             count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
+            while count < 1:
+                 count = int(input("\nPlease re-enter the number of items you would like to save (min 1)\n"))
+        
+        while count < 1:
+            count = int(input("\nPlease re-enter the number of items you would like to save (min 1)\n"))
+            while count > 100:
+                 count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
+            
         hot_list = multi.hot()
         commands = [hot_list, count]
         return commands
@@ -93,6 +103,10 @@ class Terminal(SubredditBot):
             except Conflict:
                 print("The custom feed with that name already exists on your account. Please choose a different name")
                 continue
+            except BadRequest:
+                print("There was an unidentified error with the input. Likely do character types entered or to an invalid config.ini file.")
+                return None 
+ 
         print("Successfully created an empty custom feed named %s\n" % feed_name)
         return multi
 

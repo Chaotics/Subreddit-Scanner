@@ -1,4 +1,4 @@
-from prawcore.exceptions import Conflict
+from prawcore.exceptions import Conflict, BadRequest
 
 from PyQt5.QtWidgets import QTextEdit, QMessageBox
 from PyQt5.QtGui import QTextCursor, QGuiApplication
@@ -14,15 +14,11 @@ class GuiInterface(SubredditBot):
         self.subreddit_string = None
         self.number_of_items = 0
         self.write_item = write_item
-
-
+        
     def send_error(self, error):
         # creates an error dialog to display any error messages to the screen
-        err_dialog = QMessageBox()
-        err_dialog.setIcon(QMessageBox.Critical)
-        err_dialog.setText(error)
-        err_dialog.setWindowTitle("Error")
-        err_dialog.exec_()
+        sendErrorDialog(error)
+        self.write_to_screen("Error: "+ error)
 
     def write_to_screen(self, to_write):
         # moves the cursor to position at the end to append
@@ -38,6 +34,7 @@ class GuiInterface(SubredditBot):
         self.write_to_screen(to_write)
 
     def create_read(self, reddit):
+
         # checks if there are any subreddits inputted into the program
         self.subreddit_list = [] if self.subreddit_string == '' else self.subreddit_string.split(',')
         # creates a new multi-reddit instance to add the subreddits requested
@@ -86,13 +83,18 @@ class GuiInterface(SubredditBot):
     def save_read(self, reddit):
         feed_name = self.multi_name
         multi = reddit.multireddit(get_user(), feed_name)
-        # old way to check validity of the multi name, we must do this in the gui
-        # while multi is None:
-        #     feed_name = input("\nFeed invalid, please re-enter field\n")
-        #     multi = reddit.multireddit(get_user(), feed_name)
+        if multi is None:
+            self.send_error("\nFeed invalid, please re-enter multi feed\n")
+            return None
+
         count = self.number_of_items
-        # while(count > 100):
-        #     count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
+        if count > 100:
+            self.send_error("\nToo many items given to save, please give less items.\n")
+            return None
+        if count < 1:
+            self.send_error("\nToo little items given to save, please give more items.\n")
+            return None
+
         hot_list = multi.hot()
         commands = (hot_list, count)
         return commands
@@ -110,5 +112,15 @@ class GuiInterface(SubredditBot):
                 self.send_error("There was an error creating the multi-reddit due to a conflict. Possibly because a "
                                 "multi-reddit with that name already exists.")
                 return multi
+            except BadRequest:
+                self.send_error("There was an error creating the multi-reddit due to a conflict. Likely due to an invalid subreddit name.")
+                return multi
         self.write_to_screen("Created Multi-Reddit named: %s\n" % str(feed_name))
         return multi
+
+def sendErrorDialog(error):
+    err_dialog = QMessageBox()
+    err_dialog.setIcon(QMessageBox.Critical)
+    err_dialog.setText(error)
+    err_dialog.setWindowTitle("Error")
+    err_dialog.exec_()
