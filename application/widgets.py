@@ -7,10 +7,10 @@ from PyQt5.QtWidgets import QWidget, QSpinBox, QLineEdit, QTextEdit, QVBoxLayout
 from praw import Reddit
 
 from connectors.generic import create_feed, backup_tofeed, mimic_feed, save_hot
-from connectors.gui import GuiInterface, sendErrorDialog
+from connectors.gui import GuiInterface, send_error_dialog
 
 
-class widgetCreator:
+class WidgetCreator:
 
     def __init__(self):
         self.ignore_input = False
@@ -74,7 +74,7 @@ class widgetCreator:
         submit_button = QPushButton("Submit")
         form_layout.addRow("Name of multifeed: ", name_line_edit)
         form_layout.addRow("Number of items to save: ", quantity_spin_box)
-        main_layout, display_text_edit = self.create_central_layout(back_function)
+        main_layout, display_text_edit = self.create_central_layout(back_function, (name_line_edit, quantity_spin_box))
         main_layout.insertLayout(1, form_layout)
         main_layout.addWidget(submit_button)
         submit_button.clicked.connect(
@@ -95,25 +95,22 @@ class widgetCreator:
         central_layout.addWidget(display_text_edit)
         return central_layout, display_text_edit
 
-    # TODO handle resetting other input fields
     def handle_back_pressed(self, parent_back_function, input_fields: Tuple):
         if self.ignore_input:
-            sendErrorDialog("Please do not attempt to change screens while there is a function in process.")
+            send_error_dialog("Please do not attempt to change screens while there is a function in process.")
             return
 
         parent_back_function()
         for field in input_fields:
             field.clear()
 
-    # TODO All of the following submit functions must be changed in order to error check BEFORE we send it to the gui class
-    # examples of the old error check methods have been put inside the gui class for reference and commented out
-
-    # method that gets executed when the submit button for create is pressed
+    # TODO All of the following submit functions must be changed in order to error check BEFORE we send it to the gui
+    #  class examples of the old error check methods have been put inside the gui class for reference and commented
+    #  out method that gets executed when the submit button for create is pressed
     def create_submitted(self, reddit: Reddit, name_line_edit: QLineEdit, subreddits_text_edit: QTextEdit,
                          display_text_edit: QTextEdit):
-
         if self.ignore_input:
-            sendErrorDialog("Please do not attempt to change screens while there is a function in process.")
+            send_error_dialog("Please do not attempt to change screens while there is a function in process.")
             return
 
         multi_name = name_line_edit.text()
@@ -133,9 +130,8 @@ class widgetCreator:
 
     # method that gets executed when the submit button for backup is pressed
     def backup_submitted(self, reddit: Reddit, name_line_edit: QLineEdit, display_text_edit: QTextEdit):
-
         if self.ignore_input:
-            sendErrorDialog("Please do not attempt to change screens while there is a function in process.")
+            send_error_dialog("Please do not attempt to change screens while there is a function in process.")
             return
 
         gui_connect = GuiInterface(display_text_edit)
@@ -151,9 +147,8 @@ class widgetCreator:
 
     # method that gets executed when the submit button for mimic is pressed
     def mimic_submitted(self, reddit: Reddit, name_line_edit: QLineEdit, display_text_edit: QTextEdit):
-
         if self.ignore_input:
-            sendErrorDialog("Please do not attempt to change screens while there is a function in process.")
+            send_error_dialog("Please do not attempt to change screens while there is a function in process.")
             return
 
         gui_connect = GuiInterface(display_text_edit)
@@ -171,7 +166,7 @@ class widgetCreator:
     def save_submitted(self, reddit: Reddit, name_line_edit: QLineEdit, quantity_spin_box: QSpinBox,
                        display_text_edit: QTextEdit):
         if self.ignore_input:
-            sendErrorDialog("Please do not attempt to change screens while there is a function in process.")
+            send_error_dialog("Please do not attempt to change screens while there is a function in process.")
             return
 
         num_to_save = quantity_spin_box.text()

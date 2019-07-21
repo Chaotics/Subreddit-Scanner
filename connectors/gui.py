@@ -18,7 +18,7 @@ class GuiInterface(SubredditBot):
 
     def send_error(self, error):
         # creates an error dialog to display any error messages to the screen
-        sendErrorDialog(error)
+        send_error_dialog(error)
         self.write_to_screen("Error: " + error)
 
     def write_to_screen(self, to_write):
@@ -121,7 +121,7 @@ class GuiInterface(SubredditBot):
         return multi
 
 
-def sendErrorDialog(error):
+def send_error_dialog(error):
     err_dialog = QMessageBox()
     err_dialog.setIcon(QMessageBox.Critical)
     err_dialog.setText(error)

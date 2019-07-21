@@ -3,7 +3,7 @@ import sys
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QStackedWidget, QMainWindow, QWidget, QVBoxLayout, QPushButton
 
-from application import widgets
+from application.widgets import WidgetCreator
 
 
 class AppWindow(QMainWindow):
@@ -33,12 +33,12 @@ class AppWindow(QMainWindow):
 
     # adds all of the widgets to the app that correspond to the buttons
     def add_widgets(self):
-        widgetControl = widgets.widgetCreator()
-        self.widget_stack.addWidget(widgetControl.make_create_menu(self.reddit, self.back_clicked))
-        self.widget_stack.addWidget(widgetControl.make_backup_menu(self.reddit, self.back_clicked))
-        self.widget_stack.addWidget(widgetControl.make_mimic_menu(self.reddit, self.back_clicked))
-        self.widget_stack.addWidget(widgetControl.make_save_menu(self.reddit, self.back_clicked))
-        self.widget_stack.addWidget(widgetControl.make_backup_menu(self.reddit, self.back_clicked))
+        widget_control = WidgetCreator()
+        self.widget_stack.addWidget(widget_control.make_create_menu(self.reddit, self.back_clicked))
+        self.widget_stack.addWidget(widget_control.make_backup_menu(self.reddit, self.back_clicked))
+        self.widget_stack.addWidget(widget_control.make_mimic_menu(self.reddit, self.back_clicked))
+        self.widget_stack.addWidget(widget_control.make_save_menu(self.reddit, self.back_clicked))
+        self.widget_stack.addWidget(widget_control.make_backup_menu(self.reddit, self.back_clicked))
 
     # method that switches the top widget to the main menu
     def back_clicked(self):
@@ -48,11 +48,9 @@ class AppWindow(QMainWindow):
     def create_clicked(self):
         self.widget_stack.setCurrentIndex(1)
 
-
     # method that switches the top widget to that of backup
     def backup_clicked(self):
         self.widget_stack.setCurrentIndex(2)
-
 
     # method that switches the top widget to that of mimic
     def mimic_clicked(self):
@@ -81,8 +79,3 @@ class AppWindow(QMainWindow):
             button.setFixedSize(150, min(button_height, 100))
             button.clicked.connect(button_methods[i])
             vlayout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
-            
-    
-
-
-
