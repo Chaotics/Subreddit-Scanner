@@ -1,5 +1,4 @@
 import configparser
-import time
 
 import praw
 from prawcore.exceptions import BadRequest
@@ -71,15 +70,16 @@ def backup_tofeed(reddit, subreddit_bot):
     multi = subreddit_bot.backup_read(reddit)
     if multi is None:
         return
-    
+
     subreddit_bot.backup_write("Now copying subreddits over...\n")
 
     user_subreddits = reddit.user.subreddits()
     for subreddit in user_subreddits:
         multi.add(subreddit)
         subreddit_bot.backup_write("Copied %s" % str(subreddit))
-    
-    subreddit_bot.backup_write("\nSuccessfully backed up subreddits! In order to access the backup visit:\n%s%s" % (REDDIT_URL, multi.path))
+
+    subreddit_bot.backup_write(
+        "\nSuccessfully backed up subreddits! In order to access the backup visit:\n%s%s" % (REDDIT_URL, multi.path))
 
 
 def mimic_feed(reddit, subreddit_bot):
@@ -104,6 +104,8 @@ def mimic_feed(reddit, subreddit_bot):
 
 def save_hot(reddit, subreddit_bot):
     commands = subreddit_bot.save_read(reddit)
+    if commands is None:
+        return
     hot_list = commands[0]
     count = commands[1]
     subreddit_bot.save_write("Saving items...\n")
@@ -119,4 +121,4 @@ def save_hot(reddit, subreddit_bot):
         subreddit_bot.send_error("\nAn error has occurred, could not get items in multi requested.")
         return
 
-    subreddit_bot.save_write("\nSuccessfully saved %d of the hottest topics\n" % count)
+    subreddit_bot.save_write("\nSuccessfully saved %d of the hottest topics\n." % count)
