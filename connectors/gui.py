@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QTextEdit, QMessageBox
 from prawcore.exceptions import Conflict, BadRequest
 
 from connectors.generic import get_user
-from connectors.subreddit_bot import SubredditBot
+from connectors.subreddit_bot import SubredditBot, is_valid_multi_name
 
 
 # class responsible for connecting the GUI to the generic bot functions
@@ -100,24 +100,37 @@ class GuiInterface(SubredditBot):
         commands = (hot_list, count)
         return commands
 
+    def unsave_write(self, to_write):
+        self.write_to_screen(to_write)
+
+    def unsave_read(self, reddit):
+        count = self.number_of_items
+        if count < 1:
+            self.send_error("\nToo little items given to unsave, please give at least 1 item.\n")
+        if count > 1000:
+            self.send_error("\nToo many items given to unsave, please give less than 1000 items\n")
+
+        saved_list = reddit.user.me().saved(limit=count)
+        commands = (saved_list, count)
+        return commands
+
     # method responsible for creating a new multi-reddit under the given Reddit instance
     def create_multi(self, reddit):
         multi = None
         feed_name = self.multi_name
-        # attempts to create the multi-reddit and upon error, its communicated
-        while multi is None:
+        if not is_valid_multi_name(feed_name):
+            self.send_error("The name chosen for the multi is invalid. It must be between 2-50 characters and "
+                            "contain at least two alphanumeric characters. Please try again")
+        else:
             try:
                 multi = reddit.multireddit.create(display_name=feed_name, subreddits=[])
-                break
+                self.write_to_screen("Created Multi-Reddit named: %s\n" % str(feed_name))
             except Conflict:
                 self.send_error("There was an error creating the multi-reddit due to a conflict. Possibly because a "
                                 "multi-reddit with that name already exists.")
-                return multi
             except BadRequest:
                 self.send_error("There was an error creating the multi-reddit due to a conflict. Likely due to an "
                                 "invalid subreddit name.")
-                return multi
-        self.write_to_screen("Created Multi-Reddit named: %s\n" % str(feed_name))
         return multi
 
 

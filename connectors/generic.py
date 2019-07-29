@@ -117,8 +117,30 @@ def save_hot(reddit, subreddit_bot):
             i += 1
             if i == count:
                 break
-    except:
-        subreddit_bot.send_error("\nAn error has occurred, could not get items in multi requested.")
+    except BadRequest:
+        subreddit_bot.send_error("\nAn error has occurred, could not get items in multi requested. Possibly because the"
+                                 "the given multi was invalid")
         return
-
     subreddit_bot.save_write("\nSuccessfully saved %d of the hottest topics\n." % count)
+
+
+def unsave(reddit, subreddit_bot):
+    commands = subreddit_bot.unsave_read(reddit)
+    if commands is None:
+        return
+    saved_list = list(commands[0])
+    count = commands[1]
+    subreddit_bot.unsave_write("Found %d items to unsave...\n" % len(saved_list))
+    i = 0
+    try:
+        for item in saved_list:
+            subreddit_bot.unsave_write("Unsaved \"%s\"" % item.title)
+            item.unsave()
+            i += 1
+            if i == count:
+                break
+    except BadRequest:
+        subreddit_bot.send_error("\nAn error has occurred, could not unsave an in item. Possibly because there are no"
+                                 "more items to unsave")
+        return
+    subreddit_bot.unsave_write("\nSuccessfully unsaved %d of the saved items\n" % i)

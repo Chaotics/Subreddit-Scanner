@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import QStackedWidget, QMainWindow, QWidget, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QStackedWidget, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton
 
 from application.widgets import WidgetCreator
 
@@ -33,12 +33,12 @@ class AppWindow(QMainWindow):
 
     # adds all of the widgets to the app that correspond to the buttons
     def add_widgets(self):
-        widget_control = WidgetCreator()
-        self.widget_stack.addWidget(widget_control.make_create_menu(self.reddit, self.back_clicked))
-        self.widget_stack.addWidget(widget_control.make_backup_menu(self.reddit, self.back_clicked))
-        self.widget_stack.addWidget(widget_control.make_mimic_menu(self.reddit, self.back_clicked))
-        self.widget_stack.addWidget(widget_control.make_save_menu(self.reddit, self.back_clicked))
-        self.widget_stack.addWidget(widget_control.make_backup_menu(self.reddit, self.back_clicked))
+        widget_control = WidgetCreator(self.reddit, self.back_clicked)
+        self.widget_stack.addWidget(widget_control.make_create_menu())
+        self.widget_stack.addWidget(widget_control.make_backup_menu())
+        self.widget_stack.addWidget(widget_control.make_mimic_menu())
+        self.widget_stack.addWidget(widget_control.make_save_menu())
+        self.widget_stack.addWidget(widget_control.make_unsave_menu())
 
     # method that switches the top widget to the main menu
     def back_clicked(self):
@@ -60,6 +60,10 @@ class AppWindow(QMainWindow):
     def save_clicked(self):
         self.widget_stack.setCurrentIndex(4)
 
+    # method that switches the top widget to that of unsave
+    def unsave_clicked(self):
+        self.widget_stack.setCurrentIndex(5)
+
     # method that exits the application when clicked
     def quit_clicked(self):
         sys.exit(0)
@@ -67,15 +71,28 @@ class AppWindow(QMainWindow):
     # method that adds all the buttons on the main menu
     def add_buttons(self, vlayout):
         # first creates a list of buttons to add
-        button_names = ["Create", "Backup", "Mimic", "Save Hot Items", "Quit"]
+        button_names = ["Create", "Backup", "Mimic", "Save Hot Items", "Unsave", "Quit"]
         button_methods = [self.create_clicked, self.backup_clicked, self.mimic_clicked, self.save_clicked,
-                          self.quit_clicked]
-        button_spacing = 50
+                          self.unsave_clicked, self.quit_clicked]
+        button_spacing = 20
         # then calculates the theoretical maximum button height
         button_height = (self.window_height - (len(button_names) * button_spacing)) / len(button_names)
+        button_width = 150
+        current_hlayout = QHBoxLayout()
+        current_hlayout.setAlignment(QtCore.Qt.AlignCenter)
+        current_line_buttons = 0
         # and then a button for each button name in the list is created, aligned to the center of the layout
         for i in range(0, len(button_names)):
             button = QPushButton(button_names[i])
-            button.setFixedSize(150, min(button_height, 100))
+            button.setFixedSize(button_width, min(button_height, 80))
             button.clicked.connect(button_methods[i])
-            vlayout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
+            if (current_line_buttons * button_spacing) + ((current_line_buttons+1) * button_width) > self.window_width:
+                vlayout.addLayout(current_hlayout)
+                current_hlayout = QHBoxLayout()
+                current_hlayout.setAlignment(QtCore.Qt.AlignCenter)
+                current_line_buttons = 0
+            current_hlayout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
+            current_line_buttons += 1
+        vlayout.addLayout(current_hlayout)
+        vlayout.setAlignment(QtCore.Qt.AlignCenter)
+        vlayout.setSpacing(button_spacing)

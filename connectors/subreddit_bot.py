@@ -1,3 +1,15 @@
+def is_valid_multi_name(name: str):
+    if 2 > len(name) > 50:
+        return False
+    alphanumerics = 2
+    for ch in name:
+        if '0' <= ch <= '9' or 'a' <= ch <= 'z' or 'A' <= ch <= 'Z':
+            alphanumerics -= 1
+            if alphanumerics == 0:
+                return True
+    return False
+
+
 # the generic subreddit bot used to connect to different mediums of user interaction (such as the GUI or terminal)
 class SubredditBot:
 
@@ -39,5 +51,13 @@ class SubredditBot:
 
     # method used to read the relevant data for save
     def save_read(self, reddit):
+        raise NotImplementedError()
+
+    # method used to write to the medium for unsave
+    def unsave_write(self, to_write):
+        raise NotImplementedError()
+
+    # method used to read the relevant data for unsave
+    def unsave_read(self, reddit):
         raise NotImplementedError()
 

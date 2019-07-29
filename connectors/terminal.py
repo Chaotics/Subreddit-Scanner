@@ -3,7 +3,7 @@ from sys import stderr
 from prawcore.exceptions import Conflict, BadRequest
 
 from connectors.generic import get_user
-from connectors.subreddit_bot import SubredditBot
+from connectors.subreddit_bot import SubredditBot, is_valid_multi_name
 
 
 class Terminal(SubredditBot):
@@ -74,7 +74,19 @@ class Terminal(SubredditBot):
                 count = int(input("\nPlease re-enter the number of items you would like to save (max 100)\n"))
 
         hot_list = multi.hot()
-        commands = [hot_list, count]
+        commands = (hot_list, count)
+        return commands
+
+    def unsave_write(self, to_write):
+        self.write_to_screen(to_write)
+
+    def unsave_read(self, reddit):
+        count = int(input("\nHow many items would you like to unsave from saved items? (max 1000)\n"))
+        while count < 1 or count > 1000:
+            count = int(input("\nPlease re-enter the number of items you would like to unsave (from 1-1000)\n"))
+
+        saved_list = reddit.user.me().saved(limit=count)
+        commands = (saved_list, count)
         return commands
 
     def create_multi(self, reddit):
@@ -84,15 +96,9 @@ class Terminal(SubredditBot):
         while multi is None:
             feed_name = input("\nWhat would you like to name this new feed? (limit 50 characters)\n")
             # the name is not allowed to be longer than 50 characters (per Reddit custom feed name specifications)
-            if len(feed_name) > 50:
-                print(
-                    "The maximum custom feed name length is 50 characters. The name you chose was %d characters long. "
-                    "Please try again" % len(feed_name))
-                continue
-            if len(feed_name) <= 1:
-                print(
-                    "The minimum custom feed name length is 1 character. The name you chose was %d characters long. "
-                    "Please try again" % len(feed_name))
+            if not is_valid_multi_name(feed_name):
+                self.send_error("The name chosen for the multi is invalid. It must be between 2-50 characters and "
+                                "contain at least two alphanumeric characters. Please try again")
                 continue
             # and also makes sure that the custom feed created doesn't already exist for the user
             try:
@@ -103,7 +109,8 @@ class Terminal(SubredditBot):
                 continue
             except BadRequest:
                 print(
-                    "There was an unidentified error with the input. Likely do character types entered or to an invalid config.ini file.")
+                    "There was an unidentified error with the input. Likely do character types entered or to an "
+                    "invalid config.ini file.")
                 return None
 
         print("Successfully created an empty custom feed named %s\n" % feed_name)

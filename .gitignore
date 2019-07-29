@@ -1,3 +1,5 @@
 config.ini
 requirements.txt
 venv/
+.idea/*
+*.pyc
